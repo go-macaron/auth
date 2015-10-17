@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-macaron/macaron"
+	"gopkg.in/macaron.v1"
 )
 
 func Test_BasicAuth(t *testing.T) {
