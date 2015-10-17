@@ -2,9 +2,10 @@ package auth
 
 import (
 	"encoding/base64"
-	"github.com/go-martini/martini"
 	"net/http"
 	"strings"
+
+	"github.com/go-macaron/macaron"
 )
 
 // User is the authenticated username that was extracted from the request.
@@ -15,9 +16,9 @@ var BasicRealm = "Authorization Required"
 
 // Basic returns a Handler that authenticates via Basic Auth. Writes a http.StatusUnauthorized
 // if authentication fails.
-func Basic(username string, password string) martini.Handler {
+func Basic(username string, password string) macaron.Handler {
 	var siteAuth = base64.StdEncoding.EncodeToString([]byte(username + ":" + password))
-	return func(res http.ResponseWriter, req *http.Request, c martini.Context) {
+	return func(res http.ResponseWriter, req *http.Request, c *macaron.Context) {
 		auth := req.Header.Get("Authorization")
 		if !SecureCompare(auth, "Basic "+siteAuth) {
 			unauthorized(res)
@@ -29,8 +30,8 @@ func Basic(username string, password string) martini.Handler {
 
 // BasicFunc returns a Handler that authenticates via Basic Auth using the provided function.
 // The function should return true for a valid username/password combination.
-func BasicFunc(authfn func(string, string) bool) martini.Handler {
-	return func(res http.ResponseWriter, req *http.Request, c martini.Context) {
+func BasicFunc(authfn func(string, string) bool) macaron.Handler {
+	return func(res http.ResponseWriter, req *http.Request, c *macaron.Context) {
 		auth := req.Header.Get("Authorization")
 		if len(auth) < 6 || auth[:6] != "Basic " {
 			unauthorized(res)

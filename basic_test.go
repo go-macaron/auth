@@ -2,10 +2,11 @@ package auth
 
 import (
 	"encoding/base64"
-	"github.com/go-martini/martini"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/go-macaron/macaron"
 )
 
 func Test_BasicAuth(t *testing.T) {
@@ -13,7 +14,7 @@ func Test_BasicAuth(t *testing.T) {
 
 	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte("foo:bar"))
 
-	m := martini.New()
+	m := macaron.New()
 	m.Use(Basic("foo", "bar"))
 	m.Use(func(res http.ResponseWriter, req *http.Request, u User) {
 		res.Write([]byte("hello " + u))
@@ -59,7 +60,7 @@ func Test_BasicFuncAuth(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		encoded := "Basic " + base64.StdEncoding.EncodeToString([]byte(auth))
 
-		m := martini.New()
+		m := macaron.New()
 		m.Use(BasicFunc(func(username, password string) bool {
 			return (username == "foo" || username == "bar") && password == "spam"
 		}))
